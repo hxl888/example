@@ -1,0 +1,65 @@
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+      <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+      <title></title>
+      <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+      <script src="http://res2.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+  </head>
+  <body>
+  <div id="app">
+    <button id="share">分享</button>
+  </div>
+  <script>
+    axios.post('https://mg.100api.cn/middle-wechat/openApi/createJsapiSignature', {
+      "url": "https://www.baidu.com/",
+      "tenantId": "123",
+      "appId": "wx004614b5f9bb7848"
+    })
+    .then(function (res) {
+      console.log(res);
+      var data = res.data.data
+      console.log('res.data: ', data);
+      wx.config({
+        appId: data.appId,
+        timestamp: data.timestamp,
+        nonceStr: data.nonceStr,
+        signature: data.signature,
+        jsApiList: [
+          'updateAppMessageShareData',
+          'updateTimelineShareData'
+        ]
+      })
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+    document.getElementById('share').onclick = function() {
+      console.log(99);
+      const link = 'https://baibaihe.100live.cn/#/'
+      console.log('link: ', link);
+      // const link = window.location.href.split('#')[0]
+      const imgUrl = 'http://pic.people.com.cn/NMediaFile/2023/0417/MAIN202304170911000210774691147.jpg'
+      wx.ready(function() {
+        wx.updateAppMessageShareData({
+          title: '测试title',
+          link: link,
+          imgUrl: imgUrl,
+          desc: '点击进入>>'
+        })
+        wx.updateTimelineShareData({
+          title: '测试title',
+          link: link,
+          imgUrl: imgUrl,
+          desc: '点击进入>>'
+        })
+      })
+    }
+  </script>
+  </body>
+  
+  </html>
+  
