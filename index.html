@@ -7,56 +7,82 @@
       <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
       <title></title>
       <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-      <script src="http://res2.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+      <script src="http://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
   </head>
   <body>
   <div id="app">
     <button id="share">分享</button>
   </div>
   <script>
+    console.log('location.href. ', location.href.split('#')[0]);
     axios.post('https://mg.100api.cn/middle-wechat/openApi/createJsapiSignature', {
-      "url": "https://www.baidu.com/",
-      "tenantId": "123",
-      "appId": "wx004614b5f9bb7848"
+      // "url": 'https://mg.100api.cn',
+      "url": window.location.href.split('#')[0],
+      "tenantId": "888",
+      "appId": "wx5e07eeeeed4ac493"
     })
     .then(function (res) {
-      console.log(res);
-      var data = res.data.data
-      console.log('res.data: ', data);
-      wx.config({
+      const data = res.data.data
+      const params = {
+        debug: true,
         appId: data.appId,
         timestamp: data.timestamp,
         nonceStr: data.nonceStr,
-        signature: data.signature,
+        signature: data.signature
+      }
+      console.log('params: ', params);
+      wx.config({
+        ...params,
         jsApiList: [
           'updateAppMessageShareData',
-          'updateTimelineShareData'
         ]
       })
     })
-    .catch(function (error) {
-      console.log(error);
-    });
+    // wx.config({
+    //   debug: true,
+    //   appId: 'wx5e07eeeeed4ac493',
+    //   timestamp: 1681798980,
+    //   nonceStr: 'UiDlZFOlpjXOU9za',
+    //   // signature: data.signature,
+    //   signature: '755af70146b38a6a817d52821865e8b4341b3739',
+    //   jsApiList: [
+    //     'updateAppMessageShareData',
+    //   ]
+    // })
+    // axios.post('https://mg.100api.cn/middle-wechat/openApi/findJsapiTicket', {
+    //   "tenantId": "888",
+    //   "appId": "wx5e07eeeeed4ac493"
+    // })
+    // .then(function (res) {
+    //   console.log('Ticket: ', res);
+    // })
+    // .catch(function (error) {
+    //   console.log('--', error);
+    // });
     document.getElementById('share').onclick = function() {
-      console.log(99);
-      const link = 'https://baibaihe.100live.cn/#/'
-      console.log('link: ', link);
       // const link = window.location.href.split('#')[0]
-      const imgUrl = 'http://pic.people.com.cn/NMediaFile/2023/0417/MAIN202304170911000210774691147.jpg'
+      var imgUrl = 'http://pic.people.com.cn/NMediaFile/2023/0417/MAIN202304170911000210774691147.jpg'
+      alert(wx.ready)
       wx.ready(function() {
         wx.updateAppMessageShareData({
           title: '测试title',
-          link: link,
+          link: 'https://baibaihe.100live.cn',
           imgUrl: imgUrl,
           desc: '点击进入>>'
         })
-        wx.updateTimelineShareData({
-          title: '测试title',
-          link: link,
-          imgUrl: imgUrl,
-          desc: '点击进入>>'
-        })
+        // wx.updateTimelineShareData({
+        //   title: '测试title',
+        //   link: 'https://baibaihe.100live.cn',
+        //   imgUrl: imgUrl,
+        //   desc: '点击进入>>'
+        // })
       })
+      wx.error(function(res){
+        console.log('error: ', res);
+        // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+      });
+
+
     }
   </script>
   </body>
